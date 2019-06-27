@@ -12,7 +12,6 @@ class MSStepper: UIControl {
 
     weak open var delegate: MSStepperDelegate? // default nil. weak reference
     var stepperId = 0
-    var stprPriceId = 0
     /*
      // Only override draw() if you perform custom drawing.
      // An empty implementation adversely affects performance during animation.
@@ -21,119 +20,105 @@ class MSStepper: UIControl {
      }
      */
     /// Current value of the stepper. Default is 0.
-    @objc @IBInspectable public var value: Double = 0 {
+    @objc @IBInspectable public var currentValue: Int = 0 {
         didSet {
-            value = min(maxValue, max(minValue, value))
+            currentValue = min(maxValue, max(minValue, currentValue))
             
-            valueLabel.text = formattedValue
+            currentValueLabel.text = "\(currentValue)"
             
-            if oldValue != value {
+            if oldValue != currentValue {
                 sendActions(for: .valueChanged)
             }
             
-            if value == minValue {
-                leftButton.isUserInteractionEnabled = false
+            if currentValue == minValue {
+                decreaseButton.isUserInteractionEnabled = false
             } else {
-                leftButton.isUserInteractionEnabled = true
+                decreaseButton.isUserInteractionEnabled = true
             }
             
-            if value == maxValue {
-                rightButton.isUserInteractionEnabled = false
+            if currentValue == maxValue {
+                increaseButton.isUserInteractionEnabled = false
             } else {
-                rightButton.isUserInteractionEnabled = true
+                increaseButton.isUserInteractionEnabled = true
             }
-        }
-    }
-    
-    private var formattedValue: String? {
-        let isInteger = Decimal(value).exponent >= 0
-        
-        // If we have items, we will display them as steps
-        if isInteger && stepValue == 1.0 && items.count > 0 {
-            return items[Int(value)]
-        }
-        else {
-            return formatter.string(from: NSNumber(value: value))
         }
     }
     
     /// Minimum value. Must be less than maxValue. Default is 0.
-    @objc @IBInspectable public var minValue: Double = 1 {
+    @objc @IBInspectable public var minValue: Int = 0 {
         didSet {
-            value = min(maxValue, max(minValue, value))
+            currentValue = min(maxValue, max(minValue, currentValue))
         }
     }
     
-    /// Maximum value. Must be more than minValue. Default is 50.
-    @objc @IBInspectable public var maxValue: Double = 50 {
+    /// Maximum value. Must be more than minValue. Default is 10.
+    @objc @IBInspectable public var maxValue: Int = 10 {
         didSet {
-            value = min(maxValue, max(minValue, value))
+            currentValue = min(maxValue, max(minValue, currentValue))
         }
     }
     
     /// Step value like UIStepper. Default is 1.
-    @objc @IBInspectable public var stepValue: Double = 1 {
+    @objc @IBInspectable public var stepValue: Int = 1 {
         didSet {
-            setupNumberFormatter()
         }
     }
     
     /// If the value is integer, it is shown without floating point.
     @objc @IBInspectable public var showIntegerIfDoubleIsInteger: Bool = true {
         didSet {
-            setupNumberFormatter()
         }
     }
     
     /// Text on the left button. Be sure that it fits in the button. Default is "−".
-    @objc @IBInspectable public var leftButtonText: String = "−" {
+    @objc @IBInspectable public var decreaseButtonText: String = "−" {
         didSet {
-            leftButton.setTitle(leftButtonText, for: .normal)
+            decreaseButton.setTitle(decreaseButtonText, for: .normal)
         }
     }
     
     /// Text on the right button. Be sure that it fits in the button. Default is "+".
-    @objc @IBInspectable public var rightButtonText: String = "+" {
+    @objc @IBInspectable public var increaseButtonText: String = "+" {
         didSet {
-            rightButton.setTitle(rightButtonText, for: .normal)
+            increaseButton.setTitle(increaseButtonText, for: .normal)
         }
     }
     
     /// Text color of the buttons. Default is black.
     @objc @IBInspectable public var buttonsTextColor: UIColor = UIColor.black {
         didSet {
-            leftButton.setTitleColor(buttonsTextColor, for: .normal)
-            rightButton.setTitleColor(buttonsTextColor, for: .normal)
+            decreaseButton.setTitleColor(buttonsTextColor, for: .normal)
+            increaseButton.setTitleColor(buttonsTextColor, for: .normal)
         }
     }
     
     /// Background color of the buttons. Default is lightGray.
     @objc @IBInspectable public var buttonsBackgroundColor: UIColor = UIColor.lightGray {
         didSet {
-            leftButton.backgroundColor = buttonsBackgroundColor
-            rightButton.backgroundColor = buttonsBackgroundColor
+            decreaseButton.backgroundColor = buttonsBackgroundColor
+            increaseButton.backgroundColor = buttonsBackgroundColor
         }
     }
     
     /// Font of the buttons. Default is AvenirNext-Bold, 20.0 points in size.
     @objc public var buttonsFont = UIFont(name: "AvenirNext-Bold", size: 20.0)! {
         didSet {
-            leftButton.titleLabel?.font = buttonsFont
-            rightButton.titleLabel?.font = buttonsFont
+            decreaseButton.titleLabel?.font = buttonsFont
+            increaseButton.titleLabel?.font = buttonsFont
         }
     }
     
     /// Text color of the middle label. Default is darkGray.
     @objc @IBInspectable public var labelTextColor: UIColor = UIColor.darkGray {
         didSet {
-            valueLabel.textColor = labelTextColor
+            currentValueLabel.textColor = labelTextColor
         }
     }
     
     /// Text color of the value label. Default is white.
     @objc @IBInspectable public var labelBackgroundColor: UIColor = UIColor.white {
         didSet {
-            valueLabel.backgroundColor = labelBackgroundColor
+            currentValueLabel.backgroundColor = labelBackgroundColor
         }
     }
     
@@ -148,32 +133,32 @@ class MSStepper: UIControl {
     /// Formatter for displaying the current value
     let formatter = NumberFormatter()
     
-    lazy var leftButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(self.leftButtonText, for: .normal)
+    lazy var decreaseButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(self.decreaseButtonText, for: .normal)
         button.setTitleColor(self.buttonsTextColor, for: .normal)
         button.backgroundColor = self.buttonsBackgroundColor
         button.titleLabel?.font = self.buttonsFont
-        button.addTarget(self, action: #selector(leftButtonTouchDown(button:)), for: .touchDown)
+        button.addTarget(self, action: #selector(decreaseButtonTouchDown(button:)), for: .touchDown)
         button.addTarget(self, action: #selector(decreaseStepValue(sender:)), for: .touchUpInside)
         return button
     }()
     
-    lazy var rightButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(self.rightButtonText, for: .normal)
+    lazy var increaseButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(self.increaseButtonText, for: .normal)
         button.setTitleColor(self.buttonsTextColor, for: .normal)
         button.backgroundColor = self.buttonsBackgroundColor
         button.titleLabel?.font = self.buttonsFont
-        button.addTarget(self, action: #selector(rightButtonTouchDown(button:)), for: .touchDown)
+        button.addTarget(self, action: #selector(increaseButtonTouchDown(button:)), for: .touchDown)
         button.addTarget(self, action: #selector(increaseStepValue(sender:)), for: .touchUpInside)
         return button
     }()
     
-    lazy var valueLabel: UILabel = {
+    lazy var currentValueLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.text = formattedValue
+        label.text = "\(currentValue)"
         label.textColor = self.labelTextColor
         label.backgroundColor = self.labelBackgroundColor
         label.layer.masksToBounds = true
@@ -192,76 +177,63 @@ class MSStepper: UIControl {
         }
     }
     
-    @objc public var items : [String] = [] {
-        didSet {
-            valueLabel.text = formattedValue
-        }
-    }
-    
     @objc required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setup()
+        setupComponent()
     }
     
     @objc public override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        setupComponent()
     }
     
-    fileprivate func setup() {
-        addSubview(leftButton)
-        addSubview(rightButton)
-        addSubview(valueLabel)
+    fileprivate func setupComponent() {
+        
+        addSubview(decreaseButton)
+        addSubview(increaseButton)
+        addSubview(currentValueLabel)
         
         backgroundColor = buttonsBackgroundColor
         clipsToBounds = true
         
-        setupNumberFormatter()
     }
-    
-    func setupNumberFormatter() {
-        let decValue = Decimal(stepValue)
-        let digits = decValue.significantFractionalDecimalDigits
-        formatter.minimumIntegerDigits = 1
-        formatter.minimumFractionDigits = showIntegerIfDoubleIsInteger ? 0 : digits
-        formatter.maximumFractionDigits = digits
-    }
+  
     
     public override func layoutSubviews() {
         print("labelWidthWeight == \(labelWidthWeight)")
         let buttonWidth = bounds.size.width * ((1 - labelWidthWeight) / 2)
         let labelWidth = bounds.size.width * labelWidthWeight
         
-        leftButton.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: bounds.size.height)
-        valueLabel.frame = CGRect(x: buttonWidth, y: 0, width: labelWidth, height: bounds.size.height)
-        rightButton.frame = CGRect(x: labelWidth + buttonWidth, y: 0, width: buttonWidth, height: bounds.size.height)
+        decreaseButton.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: bounds.size.height)
+        currentValueLabel.frame = CGRect(x: buttonWidth, y: 0, width: labelWidth, height: bounds.size.height)
+        increaseButton.frame = CGRect(x: labelWidth + buttonWidth, y: 0, width: buttonWidth, height: bounds.size.height)
     }
     
     func updateValue() {
         if stepperState == .ShouldIncrease {
-            value += stepValue
+            currentValue += stepValue
         } else if stepperState == .ShouldDecrease {
-            value -= stepValue
+            currentValue -= stepValue
         }
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func leftButtonTouchDown(button: UIButton) {
+    @objc func decreaseButtonTouchDown(button: UIButton) {
         
-        valueLabel.isUserInteractionEnabled = false
+        currentValueLabel.isUserInteractionEnabled = false
         
-        if value >= minValue {
+        if currentValue >= minValue {
             stepperState = .ShouldDecrease
         }
     }
     
-    @objc func rightButtonTouchDown(button: UIButton) {
+    @objc func increaseButtonTouchDown(button: UIButton) {
         
-        valueLabel.isUserInteractionEnabled = false
+        currentValueLabel.isUserInteractionEnabled = false
         
-        if value <= maxValue {
+        if currentValue <= maxValue {
             stepperState = .ShouldIncrease
         }
     }

@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         let stpr = MSStepper(frame: CGRect(x: 50, y: 100, width: 120, height: 40))
         stpr.minValue = 1
         stpr.maxValue = 10
-        stpr.value = 1
+        stpr.currentValue = 1
         stpr.stepValue = 1
         view.addSubview(stpr)
     }
