@@ -15,6 +15,7 @@
 		0007019222C4D51D0027D201 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0007019022C4D51D0027D201 /* LaunchScreen.storyboard */; };
 		0007019D22C4D51E0027D201 /* MSStepperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0007019C22C4D51E0027D201 /* MSStepperTests.swift */; };
 		000701A822C4D51E0027D201 /* MSStepperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000701A722C4D51E0027D201 /* MSStepperUITests.swift */; };
+		000701F322C4E7180027D201 /* MSStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000701F222C4E7180027D201 /* MSStepper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		000701A322C4D51E0027D201 /* MSStepperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MSStepperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		000701A722C4D51E0027D201 /* MSStepperUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSStepperUITests.swift; sourceTree = "<group>"; };
 		000701A922C4D51E0027D201 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		000701F222C4E7180027D201 /* MSStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSStepper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				0007019022C4D51D0027D201 /* LaunchScreen.storyboard */,
 				0007019322C4D51D0027D201 /* Info.plist */,
 				0007018B22C4D4FD0027D201 /* MSStepper.xcdatamodeld */,
+				000701F222C4E7180027D201 /* MSStepper.swift */,
 			);
 			path = MSStepper;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0007018D22C4D4FD0027D201 /* MSStepper.xcdatamodeld in Sources */,
+				000701F322C4E7180027D201 /* MSStepper.swift in Sources */,
 				0007018722C4D4FD0027D201 /* ViewController.swift in Sources */,
 				0007018522C4D4FD0027D201 /* AppDelegate.swift in Sources */,
 			);

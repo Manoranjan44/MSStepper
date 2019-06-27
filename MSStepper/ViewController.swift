@@ -14,7 +14,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        view.backgroundColor = UIColor(white: 0.69, alpha: 1)
+        view.backgroundColor = .cyan
+        
+        let stpr = MSStepper(frame: CGRect(x: 50, y: 100, width: 120, height: 40))
+        stpr.minValue = 1
+        stpr.maxValue = 10
+        stpr.value = 1
+        stpr.stepValue = 1
+        view.addSubview(stpr)
     }
 
 
