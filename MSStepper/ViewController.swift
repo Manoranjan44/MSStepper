@@ -8,8 +8,8 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, MSStepperDelegate{
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -24,6 +24,12 @@ class ViewController: UIViewController {
         view.addSubview(stpr)
     }
 
-
+    func didIncreaseStepValue(_ stepper: MSStepper) {
+        print("stepper ::: \(stepper.currentValue)")
+    }
+    
+    func didDecreaseStepValue(_ stepper: MSStepper) {
+        print("stepper ::: \(stepper.currentValue)")
+    }
 }
 

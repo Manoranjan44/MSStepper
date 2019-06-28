@@ -197,10 +197,8 @@ class MSStepper: UIControl {
         clipsToBounds = true
         
     }
-  
     
     public override func layoutSubviews() {
-        print("labelWidthWeight == \(labelWidthWeight)")
         let buttonWidth = bounds.size.width * ((1 - labelWidthWeight) / 2)
         let labelWidth = bounds.size.width * labelWidthWeight
         
